@@ -1,7 +1,8 @@
+/* Copyright 2026 XYZ Retail */
 package com.xyz.retail.cart.domain.exception;
 
 public class CartException extends RuntimeException {
-    public CartException(String message) {
-        super(message);
-    }
+  public CartException(String message) {
+    super(message);
+  }
 }

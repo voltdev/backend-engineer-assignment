@@ -1,10 +1,10 @@
+/* Copyright 2026 XYZ Retail */
 package com.xyz.retail.cart.infrastructure.adapter.persistence;
+
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public interface CartItemJpaRepository extends JpaRepository<CartItemJpaEntity, UUID> {
-}
+public interface CartItemJpaRepository extends JpaRepository<CartItemJpaEntity, UUID> {}

@@ -1,3 +1,4 @@
+/* Copyright 2026 XYZ Retail */
 package com.xyz.retail;
 
 import org.junit.jupiter.api.Test;
@@ -6,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class RetailApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+  @Test
+  void contextLoads() {}
 }
