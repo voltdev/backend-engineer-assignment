@@ -11,14 +11,6 @@ spring:
     username: sa
     password: ""
 
-  jpa:
-    hibernate:
-      ddl-auto: none      # Flyway controls schema
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -30,3 +22,4 @@ logging:
     org.springdoc: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+    org.flywaydb: DEBUG
