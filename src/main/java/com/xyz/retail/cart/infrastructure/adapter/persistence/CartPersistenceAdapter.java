@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xyz.retail.cart.application.port.out.DeleteCartPort;
 import com.xyz.retail.cart.application.port.out.LoadCartPort;
 import com.xyz.retail.cart.application.port.out.SaveCartPort;
 import com.xyz.retail.cart.domain.entity.Cart;
@@ -16,7 +17,7 @@ import com.xyz.retail.cart.domain.valueobject.CartId;
 import com.xyz.retail.cart.domain.valueobject.UserId;
 
 @Component
-public class CartPersistenceAdapter implements LoadCartPort, SaveCartPort {
+public class CartPersistenceAdapter implements LoadCartPort, SaveCartPort, DeleteCartPort {
 
   private final CartJpaRepository cartRepository;
 
@@ -83,5 +84,11 @@ public class CartPersistenceAdapter implements LoadCartPort, SaveCartPort {
         new UserId(cartJpaEntity.getUserId()),
         items,
         cartJpaEntity.getTotalPrice());
+  }
+
+  @Override
+  @Transactional
+  public void deleteByUserId(UserId userId) {
+    cartRepository.findByUserId(userId.value()).ifPresent(cartRepository::delete);
   }
 }

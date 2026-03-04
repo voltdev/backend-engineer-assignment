@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,5 +35,20 @@ public class GlobalExceptionHandler {
                 "Internal Server Error",
                 ex.getMessage(),
                 req.getDescription(false)));
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<RestErrorResponse> handleResponseStatusException(
+      ResponseStatusException ex, WebRequest request) {
+
+    RestErrorResponse errorResponse =
+        new RestErrorResponse(
+            Instant.now(),
+            ex.getStatusCode().value(),
+            ex.getStatusCode().toString(),
+            ex.getReason(),
+            request.getDescription(false));
+
+    return new ResponseEntity<>(errorResponse, ex.getStatusCode());
   }
 }

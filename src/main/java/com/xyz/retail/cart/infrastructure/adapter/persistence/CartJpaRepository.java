@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CartJpaRepository extends JpaRepository<CartJpaEntity, UUID> {
   Optional<CartJpaEntity> findByUserId(String userId);
+
+  void deleteByUserId(String userId);
 }

@@ -2,9 +2,11 @@
 package com.xyz.retail.cart.application.service;
 
 import com.xyz.retail.cart.application.port.in.AddToCartUseCase;
+import com.xyz.retail.cart.application.port.in.ClearCartUseCase;
 import com.xyz.retail.cart.application.port.in.GetCartUseCase;
 import com.xyz.retail.cart.application.port.in.command.AddToCartCommand;
 import com.xyz.retail.cart.application.port.in.query.GetCartQuery;
+import com.xyz.retail.cart.application.port.out.DeleteCartPort;
 import com.xyz.retail.cart.application.port.out.LoadCartPort;
 import com.xyz.retail.cart.application.port.out.SaveCartPort;
 import com.xyz.retail.cart.domain.entity.Cart;
@@ -14,17 +16,22 @@ import com.xyz.retail.cart.domain.valueobject.UserId;
 import com.xyz.retail.product.application.port.out.LoadProductPort;
 import com.xyz.retail.product.service.domain.entity.Product;
 
-public class CartService implements AddToCartUseCase, GetCartUseCase {
+public class CartService implements AddToCartUseCase, GetCartUseCase, ClearCartUseCase {
 
   private final LoadCartPort loadCartPort;
   private final SaveCartPort saveCartPort;
   private final LoadProductPort loadProductPort;
+  private final DeleteCartPort deleteCartPort;
 
   public CartService(
-      LoadCartPort loadCartPort, SaveCartPort saveCartPort, LoadProductPort loadProductPort) {
+      LoadCartPort loadCartPort,
+      SaveCartPort saveCartPort,
+      LoadProductPort loadProductPort,
+      DeleteCartPort deleteCartPort) {
     this.loadCartPort = loadCartPort;
     this.saveCartPort = saveCartPort;
     this.loadProductPort = loadProductPort;
+    this.deleteCartPort = deleteCartPort;
   }
 
   @Override
@@ -58,5 +65,11 @@ public class CartService implements AddToCartUseCase, GetCartUseCase {
     return loadCartPort
         .loadCartByUserId(userId)
         .orElseThrow(() -> new CartException("Cart not found for user: " + query.userId()));
+  }
+
+  @Override
+  public void clearCart(String userId) {
+    UserId userIdObj = new UserId(userId);
+    deleteCartPort.deleteByUserId(userIdObj);
   }
 }
