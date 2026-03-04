@@ -6,10 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 import com.xyz.retail.cart.application.port.in.ClearCartUseCase;
 import com.xyz.retail.cart.application.port.in.GetCartUseCase;
+import com.xyz.retail.order.application.port.out.LoadOrderPort;
 import com.xyz.retail.order.application.port.out.LoadUserPort;
 import com.xyz.retail.order.application.port.out.SaveOrderPort;
 import com.xyz.retail.order.application.service.OrderService;
 import com.xyz.retail.product.application.port.out.LoadProductPort;
+import com.xyz.retail.reporting.application.port.out.SaveSalesReportPort;
 
 @Configuration
 public class OrderConfig {
@@ -19,9 +21,17 @@ public class OrderConfig {
       GetCartUseCase getCartUseCase,
       ClearCartUseCase clearCartUseCase,
       SaveOrderPort saveOrderPort,
+      LoadOrderPort loadOrderPort,
       LoadUserPort loadUserPort,
-      LoadProductPort loadProductPort) {
+      LoadProductPort loadProductPort,
+      SaveSalesReportPort saveSalesReportPort) {
     return new OrderService(
-        getCartUseCase, clearCartUseCase, saveOrderPort, loadUserPort, loadProductPort);
+        getCartUseCase,
+        clearCartUseCase,
+        saveOrderPort,
+        loadOrderPort,
+        loadUserPort,
+        loadProductPort,
+        saveSalesReportPort);
   }
 }

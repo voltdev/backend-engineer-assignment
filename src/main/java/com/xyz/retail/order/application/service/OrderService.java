@@ -1,39 +1,51 @@
 /* Copyright 2026 XYZ Retail */
 package com.xyz.retail.order.application.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.xyz.retail.cart.application.port.in.ClearCartUseCase;
 import com.xyz.retail.cart.application.port.in.GetCartUseCase;
 import com.xyz.retail.cart.application.port.in.query.GetCartQuery;
 import com.xyz.retail.cart.domain.entity.Cart;
+import com.xyz.retail.order.application.port.in.OrderSearchUseCase;
 import com.xyz.retail.order.application.port.in.PlaceOrderUseCase;
 import com.xyz.retail.order.application.port.in.command.PlaceOrderCommand;
+import com.xyz.retail.order.application.port.in.query.OrderSearchQuery;
+import com.xyz.retail.order.application.port.out.LoadOrderPort;
 import com.xyz.retail.order.application.port.out.LoadUserPort;
 import com.xyz.retail.order.application.port.out.SaveOrderPort;
 import com.xyz.retail.order.domain.entity.Order;
 import com.xyz.retail.order.domain.exception.OrderException;
+import com.xyz.retail.order.domain.valueobject.OrderId;
 import com.xyz.retail.product.application.port.out.LoadProductPort;
+import com.xyz.retail.reporting.application.port.out.SaveSalesReportPort;
 
-public class OrderService implements PlaceOrderUseCase {
+public class OrderService implements PlaceOrderUseCase, OrderSearchUseCase {
 
   private final GetCartUseCase getCartUseCase;
   private final ClearCartUseCase clearCartUseCase;
   private final SaveOrderPort saveOrderPort;
+  private final LoadOrderPort loadOrderPort;
   private final LoadUserPort loadUserPort;
   private final LoadProductPort loadProductPort;
+  private final SaveSalesReportPort saveSalesReportPort;
 
   public OrderService(
       GetCartUseCase getCartUseCase,
       ClearCartUseCase clearCartUseCase,
       SaveOrderPort saveOrderPort,
+      LoadOrderPort loadOrderPort,
       LoadUserPort loadUserPort,
-      LoadProductPort loadProductPort) {
+      LoadProductPort loadProductPort,
+      SaveSalesReportPort saveSalesReportPort) {
     this.getCartUseCase = getCartUseCase;
     this.clearCartUseCase = clearCartUseCase;
     this.saveOrderPort = saveOrderPort;
+    this.loadOrderPort = loadOrderPort;
     this.loadUserPort = loadUserPort;
     this.loadProductPort = loadProductPort;
+    this.saveSalesReportPort = saveSalesReportPort;
   }
 
   @Override
@@ -73,9 +85,17 @@ public class OrderService implements PlaceOrderUseCase {
     // Save order
     Order savedOrder = saveOrderPort.save(order);
 
+    // Record sales data for reporting
+    saveSalesReportPort.recordSalesFromOrder(savedOrder);
+
     // Clear the cart after successful order placement
     clearCartUseCase.clearCart(command.userId());
 
     return savedOrder;
+  }
+
+  @Override
+  public Optional<Order> findOrderById(OrderSearchQuery query) {
+    return loadOrderPort.findById(new OrderId(query.orderId()));
   }
 }

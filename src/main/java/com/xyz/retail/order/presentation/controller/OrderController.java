@@ -1,11 +1,15 @@
 /* Copyright 2026 XYZ Retail */
 package com.xyz.retail.order.presentation.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.xyz.retail.order.application.port.in.OrderSearchUseCase;
 import com.xyz.retail.order.application.port.in.PlaceOrderUseCase;
+import com.xyz.retail.order.application.port.in.query.OrderSearchQuery;
 import com.xyz.retail.order.domain.entity.Order;
 import com.xyz.retail.order.domain.exception.OrderException;
 import com.xyz.retail.order.presentation.dto.OrderResponseDto;
@@ -20,9 +24,12 @@ import jakarta.validation.Valid;
 public class OrderController {
 
   private final PlaceOrderUseCase placeOrderUseCase;
+  private final OrderSearchUseCase orderSearchUseCase;
 
-  public OrderController(PlaceOrderUseCase placeOrderUseCase) {
+  public OrderController(
+      PlaceOrderUseCase placeOrderUseCase, OrderSearchUseCase orderSearchUseCase) {
     this.placeOrderUseCase = placeOrderUseCase;
+    this.orderSearchUseCase = orderSearchUseCase;
   }
 
   @Operation(summary = "Place a new order from cart")
@@ -35,5 +42,17 @@ public class OrderController {
     } catch (OrderException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+  }
+
+  @Operation(summary = "Search order by ID")
+  @GetMapping("/{orderId}")
+  public OrderResponseDto searchOrderById(@PathVariable UUID orderId) {
+    return orderSearchUseCase
+        .findOrderById(new OrderSearchQuery(orderId))
+        .map(OrderApiMapper::toResponse)
+        .orElseThrow(
+            () ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Order not found with ID: " + orderId));
   }
 }

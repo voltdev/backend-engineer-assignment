@@ -13,6 +13,8 @@ import com.xyz.retail.product.domain.valueobject.ProductId;
  */
 public class Product {
 
+  private static final int LOW_STOCK_THRESHOLD = 10;
+
   private final ProductId id;
   private final String name;
   private final BigDecimal price;
@@ -41,7 +43,7 @@ public class Product {
 
   // Business behavior
   public boolean isLowStock() {
-    return quantity < 10;
+    return quantity < LOW_STOCK_THRESHOLD;
   }
 
   // Getters (no setters to maintain immutability)
