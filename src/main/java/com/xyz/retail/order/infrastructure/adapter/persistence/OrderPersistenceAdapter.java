@@ -92,6 +92,10 @@ public class OrderPersistenceAdapter implements LoadOrderPort, SaveOrderPort {
   }
 
   private OrderStatus mapToDomainStatus(OrderJpaEntity.OrderStatusJpa status) {
+    if (status == null) {
+      return OrderStatus.CREATED; // Default value or throw an exception
+    }
+
     return switch (status) {
       case CREATED -> OrderStatus.CREATED;
       case CONFIRMED -> OrderStatus.CONFIRMED;
